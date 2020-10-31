@@ -5,116 +5,128 @@ client.once('ready', () => {
 	console.log('Ready!');
 });
 
-client.login('NzcxMjcxMzE1MjQ3MDcxMjMz.X5psYw.keh_EecfBoJ29p6SRvgErNxR2ps');
+client.login('NzcxMjcxMzE1MjQ3MDcxMjMz.X5psYw.hMlLoLs5KN88M7qTTf9QnpYqsVg');
+
+'use strict';
+
+/**
+ * A ping pong bot, whenever you send "ping", it replies "pong".
+ */
+
+
+
+/**
+ * The ready event is vital, it means that only _after_ this will your bot start reacting to information
+ * received from Discord
+ */
+client.on('ready', () => {
+  console.log('I am ready!');
+});
+
+// Create an event listener for messages
+client.on('message', message => {
+  // If the message is "ping"
+  if (message.content === 'ping') {
+    // Send "pong" to the same channel
+    message.channel.send('pong');
+  }
+});
+'use strict';
+
+/**
+ * Send a user a link to their avatar
+ */
+
+
+
+/**
+ * The ready event is vital, it means that only _after_ this will your bot start reacting to information
+ * received from Discord
+ */
+client.on('ready', () => {
+  console.log('I am ready!');
+});
+
+// Create an event listener for messages
+client.on('message', message => {
+  // If the message is "what is my avatar"
+  if (message.content === 'what is my avatar') {
+    // Send the user's avatar URL
+    message.reply(message.author.displayAvatarURL());
+  }
+});
+// Extract the required classes from the discord.js module
+const { Client, MessageAttachment } = require('discord.js');
+
+
+/**
+ * The ready event is vital, it means that only _after_ this will your bot start reacting to information
+ * received from Discord
+ */
+client.on('ready', () => {
+  console.log('I am ready!');
+});
 
 client.on('message', message => {
-    if(message.content.startsWith(`${prefix}kick`)) {
-        if(!message.member.hasPermission("KICK_MEMBERS")) {
-            return message.channel.send("```Nu ai permisiunea sa folosesti aceasta comanda!```")
-        }
-        if(!message.guild.me.hasPermission("KICK_MEMBERS")) {
-            return message.channel.send("**Nu am permisiunea pentru a folosi aceasta comanda!**")
-        }
-        let target = message.mentions.members.first();
-        if(!target) {
-            return message.channel.send("```!kick <discord.tag>```")
-        }
-        if(target.id === message.author.id) {
-            return message.channel.send("**Nu poti sa iti dai kick singur :)**")
-        }
-        let member = message.mentions.members.first();
-        member.kick().then((member) => {
-            let embed = new Discord.MessageEmbed()
-            .setDescription(`${target} cu id-ul (${target.id})`)
-            .setColor("RED")
-            .setFooter(`A primit kick de la ${message.author.username}`);
-            message.channel.send(embed)
-        })
-    }
-})
+  // If the message is '!rip'
+  if (message.content === '!rip') {
+    // Create the attachment using MessageAttachment
+    const attachment = new MessageAttachment('https://i.imgur.com/w3duR07.png');
+    // Send the attachment in the message channel
+    message.channel.send(attachment);
+  }
+});
+
+
+/**
+ * The ready event is vital, it means that only _after_ this will your bot start reacting to information
+ * received from Discord
+ */
+client.on('ready', () => {
+  console.log('I am ready!');
+});
 
 client.on('message', message => {
-    if(message.content.startsWith(`${prefix}ban`)) {
-        if(!message.member.hasPermission("BAN_MEMBERS")) {
-            return message.channel.send("```Nu ai permisiunea sa folosesti aceasta comanda!```")
-        }
-        if(!message.guild.me.hasPermission("KICK_MEMBERS")) {
-            return message.channel.send("**Nu am permisiunea pentru a folosi aceasta comanda!**")
-        }
-        let target = message.mentions.members.first();
-        if(!target) {
-            return message.channel.send("```!ban <discord.tag>```")
-        }
-        if(target.id === message.author.id) {
-            return message.channel.send("**Nu poti sa iti dai ban singur :)**")
-        }
-        let member = message.mentions.members.first();
-        member.ban().then((member) => {
-            let embed = new Discord.MessageEmbed()
-            .setDescription(`${target} cu id-ul (${target.id})`)
-            .setColor("RED")
-            .setFooter(`A primit ban de la ${message.author.username}`);
-            message.channel.send(embed)
-        })
-    }
-})
+  // Ignore messages that aren't from a guild
+  if (!message.guild) return;
 
-const { MessageEmbed } = require("discord.js");
-const { formatDate } = require("../../functions");
-module.exports = {
-  name: "avatar",
-  description: "Get your own or someone else's avatar",
-  usage: "[user mention]",
-  category: "fun",
-  run: async (bot, message, args) => {
-    let Embed = new MessageEmbed();
-    let roles = [];
-    if (!message.mentions.users.first()) {
-      message.member.roles.cache.forEach((role) => {
-        roles.push(role.name);
-      });
-      Embed.setTitle(`Your avatar!`);
-      Embed.setThumbnail(message.author.displayAvatarURL());
-      Embed.setColor(`RANDOM`);
-      Embed.setDescription(
-        `Joined: (MM/DD/YYYY) ${formatDate(message.member.joinedAt)}\nID: ${
-          message.author.id
-        }\nRoles: ${roles}`
-      );
-      return message.channel.send(Embed);
+  // If the message content starts with "!kick"
+  if (message.content.startsWith('!kick')) {
+    // Assuming we mention someone in the message, this will return the user
+    // Read more about mentions over at https://discord.js.org/#/docs/main/master/class/MessageMentions
+    const user = message.mentions.users.first();
+    // If we have a user mentioned
+    if (user) {
+      // Now we get the member from the user
+      const member = message.guild.member(user);
+      // If the member is in the guild
+      if (member) {
+        /**
+         * Kick the member
+         * Make sure you run this on a member, not a user!
+         * There are big differences between a user and a member
+         */
+        member
+          .kick('Optional reason that will display in the audit logs')
+          .then(() => {
+            // We let the message author know we were able to kick the person
+            message.reply(`Successfully kicked ${user.tag}`);
+          })
+          .catch(err => {
+            // An error happened
+            // This is generally due to the bot not being able to kick the member,
+            // either due to missing permissions or role hierarchy
+            message.reply('I was unable to kick the member');
+            // Log the error
+            console.error(err);
+          });
+      } else {
+        // The mentioned user isn't in this guild
+        message.reply("That user isn't in this guild!");
+      }
+      // Otherwise, if no user was mentioned
     } else {
-      let User = message.mentions.members.first();
-      User.roles.cache.forEach((role) => {
-        roles.push(role.name);
-      });
-      Embed.setTitle(`${bot.users.cache.get(User.id).tag}'s avatar!`);
-      Embed.setThumbnail(bot.users.cache.get(User.id).displayAvatarURL());
-      Embed.setColor(`RANDOM`);
-      Embed.setDescription(
-        `Joined: (MM/DD/YYYY) ${formatDate(User.joinedAt)}\nID: ${
-          User.id
-        }\nRoles: ${roles}`
-      );
-      return message.channel.send(Embed);
+      message.reply("You didn't mention the user to kick!");
     }
-  },
-};
-
-const { MessageEmbed } = require("discord.js");
-const api = require("imageapi.js");
-module.exports = {
-  name: "meme",
-  description: "Get a meme!",
-  category: "fun",
-  run: async (bot, message, args) => {
-    let subreddits = ["comedyheaven", "dank", "meme", "memes"];
-    let subreddit = subreddits[Math.floor(Math.random() * subreddits.length)];
-    let img = await api(subreddit, true);
-    const Embed = new MessageEmbed()
-      .setTitle(`A meme from r/${subreddit}`)
-      .setURL(`https://reddit.com/r/${subreddit}`)
-      .setColor("RANDOM")
-      .setImage(img);
-    message.channel.send(Embed);
-  },
-};
+  }
+});
